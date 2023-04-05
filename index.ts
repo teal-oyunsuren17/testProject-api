@@ -1,10 +1,15 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 const mongoose = require("mongoose");
 import dotenv from 'dotenv';
-import { model, Schema } from 'mongoose';
+import { moviesRouter } from './modules/movies/moviesRoutes';
+const cors = require('cors')
 dotenv.config();
+
 const app: Express = express();
 const port = process.env.PORT || 8000;
+
+app.use(cors());
+app.use(express.json());
 
 mongoose
   .connect(
@@ -12,17 +17,7 @@ mongoose
   )
   .then(() => console.log("Connected"));
 
-
-const categorySchema = new mongoose.Schema({
-    _id: String,
-    name: String,
-  });
-const Category = mongoose.model("Category", categorySchema);
-
-    app.get("/category" , (req : Request, res : Response) => {
-        const list  =  Category.find();
-        res.json(list);
-    }) 
+  app.use("/movies", moviesRouter)
 
 app.listen(port, () => {
 console.log(`⚡️ [server]: Server is running at http://localhost:${port}`)});
